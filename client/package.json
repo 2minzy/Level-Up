@@ -1,0 +1,21 @@
+{
+  "name": "levelup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "keywords": [],
+  "author": "Minji Lee",
+  "license": "ISC",
+  "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "next": "^10.0.4",
+    "nprogress": "^0.2.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  }
+}

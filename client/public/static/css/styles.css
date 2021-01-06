@@ -1,0 +1,9 @@
+#nprogress .bar {
+  height: 4px !important;
+}
+
+.nav {
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
