@@ -6,11 +6,24 @@ require('dotenv').config();
 
 const app = express();
 
+// DB
+mongoose
+  .connect(process.env.DATABASE_CLOUD, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('DB connected'))
+  .catch(err => console.log(err));
+
 // be able to access bodyparser middleware
 app.use(express.json());
 
 // import routes
 const authRoutes = require('./routes/auth');
+
+// app middlewares
+app.use(morgan('dev'));
+app.use(cors({ origin: process.env.CLIENT_URL }));
 
 // middlewares
 app.use('/api', authRoutes);
