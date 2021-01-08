@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import Router from 'next/router';
+import { isAuth, logout } from '../helpers/auth';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 
@@ -21,24 +22,52 @@ const Layout = ({ children }) => {
       <link rel='stylesheet' href='/static/css/styles.css' />
     </>
   );
-
   const nav = () => (
     <ul className='nav bg-dark'>
       <li className='nav-item'>
         <Link href='/'>
-          <a className='nav-link text-light'>Home</a>
+          <a className='nav-link nav-logo'>Streami</a>
         </Link>
       </li>
-      <li className='nav-item'>
-        <Link href='/login'>
-          <a className='nav-link text-light'>Login</a>
-        </Link>
-      </li>
-      <li className='nav-item'>
-        <Link href='/register'>
-          <a className='nav-link text-light'>Register</a>
-        </Link>
-      </li>
+
+      {!isAuth() && (
+        <>
+          <li className='nav-item'>
+            <Link href='/login'>
+              <a className='nav-link text-light'>Login</a>
+            </Link>
+          </li>
+          <li className='nav-item'>
+            <Link href='/register'>
+              <a className='nav-link text-light'>Register</a>
+            </Link>
+          </li>
+        </>
+      )}
+
+      {isAuth() && isAuth().role === 'admin' && (
+        <li className='nav-item ml-auto'>
+          <Link href='/admin'>
+            <a className='nav-link text-light'>{isAuth().name}</a>
+          </Link>
+        </li>
+      )}
+
+      {isAuth() && isAuth().role === 'subscriber' && (
+        <li className='nav-item ml-auto'>
+          <Link href='/user'>
+            <a className='nav-link text-light'>{isAuth().name}</a>
+          </Link>
+        </li>
+      )}
+
+      {isAuth() && (
+        <li className='nav-item'>
+          <a onClick={logout} className='nav-link text-light'>
+            Logout
+          </a>
+        </li>
+      )}
     </ul>
   );
 

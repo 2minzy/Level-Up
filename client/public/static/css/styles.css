@@ -1,9 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Leckerli+One&display=swap');
+
 #nprogress .bar {
   height: 4px !important;
 }
 
 .nav {
-  height: 60px;
+  padding: 0 20px;
+  height: 70px;
+  font-size: 1rem;
   display: flex;
   align-items: center;
+}
+
+.nav-logo {
+  font-family: 'Leckerli One', cursive;
+  font-size: 1.8rem;
+  color: #ffc007;
+}
+
+.nav-logo:hover {
+  color: white;
 }
