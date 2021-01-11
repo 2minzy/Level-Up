@@ -26,7 +26,7 @@ const Layout = ({ children }) => {
     <ul className='nav bg-dark'>
       <li className='nav-item'>
         <Link href='/'>
-          <a className='nav-link nav-logo'>Streami</a>
+          <a className='nav-link nav-logo'>LevelUp</a>
         </Link>
       </li>
 

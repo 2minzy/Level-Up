@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Leckerli+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Shrikhand&display=swap');
 
 #nprogress .bar {
   height: 4px !important;
@@ -13,8 +13,8 @@
 }
 
 .nav-logo {
-  font-family: 'Leckerli One', cursive;
-  font-size: 1.8rem;
+  font-family: 'Shrikhand', cursive;
+  font-size: 2rem;
   color: #ffc007;
 }
 

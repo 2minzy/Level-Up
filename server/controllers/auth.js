@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
+const expressJwt = require('express-jwt');
 const { registerEmailParams } = require('../helpers/email');
 const shortId = require('shortid');
 
@@ -13,40 +14,40 @@ AWS.config.update({
 const ses = new AWS.SES({ apiVersion: '2010-12-01' });
 
 exports.register = (req, res) => {
+  // console.log('REGISTER CONTROLLER', req.body);
   const { name, email, password } = req.body;
-
-  // Check if user exists in our db
+  // check if user exists in our db
   User.findOne({ email }).exec((err, user) => {
     if (user) {
-      console.log(err);
-      return res.status(400).json({ error: 'Email is taken' });
+      return res.status(400).json({
+        error: 'Email is taken',
+      });
     }
-
     // generate token with user name email and password
     const token = jwt.sign(
       { name, email, password },
       process.env.JWT_ACCOUNT_ACTIVATION,
       {
-        expiresIn: '30m',
+        expiresIn: '10m',
       }
     );
 
     // send email
     const params = registerEmailParams(email, token);
 
-    const sendEmailPromise = ses.sendEmail(params).promise();
+    const sendEmailOnRegister = ses.sendEmail(params).promise();
 
-    sendEmailPromise
+    sendEmailOnRegister
       .then(data => {
         console.log('email submitted to SES', data);
         res.json({
-          message: `Email has been sent to ${email}, Follow the instructions to complete your registration.`,
+          message: `Email has been sent to ${email}, Follow the instructions to complete your registration`,
         });
       })
       .catch(error => {
         console.log('ses email on register', error);
         res.json({
-          message: `We could not verify your email. Please try again.`,
+          message: `We could not verify your email. Please try again`,
         });
       });
   });
@@ -54,6 +55,7 @@ exports.register = (req, res) => {
 
 exports.registerActivate = (req, res) => {
   const { token } = req.body;
+  // console.log(token);
   jwt.verify(
     token,
     process.env.JWT_ACCOUNT_ACTIVATION,
@@ -93,7 +95,7 @@ exports.registerActivate = (req, res) => {
 
 exports.login = (req, res) => {
   const { email, password } = req.body;
-
+  // console.table({ email, password });
   User.findOne({ email }).exec((err, user) => {
     if (err || !user) {
       return res.status(400).json({
@@ -116,5 +118,43 @@ exports.login = (req, res) => {
       token,
       user: { _id, name, email, role },
     });
+  });
+};
+
+exports.requireSignin = expressJwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ['HS256'],
+}); // req.user
+
+exports.authMiddleware = (req, res, next) => {
+  const authUserId = req.user._id;
+  User.findOne({ _id: authUserId }).exec((err, user) => {
+    if (err || !user) {
+      return res.status(400).json({
+        error: 'User not found',
+      });
+    }
+    req.profile = user;
+    next();
+  });
+};
+
+exports.adminMiddleware = (req, res, next) => {
+  const adminUserId = req.user._id;
+  User.findOne({ _id: adminUserId }).exec((err, user) => {
+    if (err || !user) {
+      return res.status(400).json({
+        error: 'User not found',
+      });
+    }
+
+    if (user.role !== 'admin') {
+      return res.status(400).json({
+        error: 'Admin resource. Access denied',
+      });
+    }
+
+    req.profile = user;
+    next();
   });
 };

@@ -21,13 +21,14 @@ app.use(express.json());
 
 // import routes
 const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
 
 // app middlewares
 app.use(morgan('dev'));
 app.use(cors({ origin: process.env.CLIENT_URL }));
 
 // middlewares
-app.use('/api', authRoutes);
+app.use('/api', authRoutes, userRoutes);
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => console.log(`API is running on port ${port}`));
